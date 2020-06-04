@@ -2,7 +2,10 @@
 ![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/labonte/iobroker.svg?logo=docker&logoColor=white)
 
 # ioBroker.docker
-Running [ioBroker](https://www.iobroker.net/) in docker using [`node:12-buster`](https://hub.docker.com/_/node) as the base image.
+Running [ioBroker](https://www.iobroker.net/) in docker using [`node:14-buster`](https://hub.docker.com/_/node) as the base image.
+
+## Automated build on Docker Hub
+The build configuration on docker hub is set to automatically rebuild the image on base image updates. Image 
 
 ## How to?
 

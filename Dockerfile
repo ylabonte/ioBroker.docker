@@ -1,4 +1,4 @@
-FROM node:12-buster
+FROM node:14-buster
 
 # Install dependencies
 RUN apt-get -qq update && apt-get -qq install -y apt-utils \
