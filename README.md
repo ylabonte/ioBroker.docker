@@ -2,7 +2,7 @@
 ![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/labonte/iobroker.svg?logo=docker&logoColor=white)
 
 # ioBroker.docker
-Running [ioBroker](https://www.iobroker.net/) in docker using [`node:12-buster`](https://hub.docker.com/_/node) as the base image.
+Running [ioBroker](https://www.iobroker.net/) in docker using [`node:12-alpine`](https://hub.docker.com/_/node) as the base image.
 
 ## How to?
 
