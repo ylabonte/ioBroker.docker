@@ -1,4 +1,4 @@
-FROM node:12-alpine
+FROM node:14-alpine
 
 # Install ioBroker
 RUN apk add --no-cache --virtual .gyp acl avahi bash build-base curl git linux-headers \
