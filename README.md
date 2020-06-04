@@ -21,7 +21,7 @@ Running [ioBroker](https://www.iobroker.net/) in docker using [`node`](https://h
 Both are just examples. You might alter the _Dockerfile_, add your own
 custom scripts or adapter specific dependencies, expose and/or publish
 additional ports (`8081`, `8082`, `8083` and `8084` are already exposed)
-or mount volumes (`/opt/iobroker/backups` and `/etc/letsancrypt` would be
+or mount volumes (`/opt/iobroker/backups` and `/etc/letsencrypt` would be
 the desired ones).
 
 #### Build by your own
