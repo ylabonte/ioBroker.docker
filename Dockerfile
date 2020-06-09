@@ -3,11 +3,10 @@ FROM node:12-alpine
 # Install ioBroker
 RUN apk add --no-cache --virtual .gyp acl avahi bash build-base curl git linux-headers \
     make gcc g++ pkgconfig python python-dev udev unzip libcap shadow sudo \
-    ffmpeg \
   && curl -sL https://iobroker.net/install.sh | bash - \
   && test -d /home/iobroker || mkdir -p /home/iobroker/bin \
   && iobroker start \
-  && sleep 60s \
+  && sleep 5s \
   && iobroker stop
 
 # Declare persistent volumes
