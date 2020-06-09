@@ -33,6 +33,10 @@ something like that.
 
 
 ## Available images and their base
+
+Images are automatically built, when a base image is updated or there's a
+new commit on one of the following Git branches in my repo.
+
 | Git Branch       | Docker Image                     | Base Image       |
 |:-----------------|:---------------------------------|:-----------------|
 | `master`         | `labonte/iobroker:latest`        | `node:12-buster` |
