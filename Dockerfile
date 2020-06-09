@@ -1,19 +1,16 @@
 FROM node:14-buster
 
-# Install dependencies
-RUN apt-get -qq update && apt-get -qq install -y apt-utils \
-  && apt-get -qq clean && rm -rf /var/lib/apt/lists/*
-RUN apt-get -qq update && apt-get -qq install -y build-essential \
-    gcc g++ make libavahi-compat-libdnssd-dev libudev-dev libpam0g-dev \
-    libcap2-bin sudo acl pkg-config git curl unzip python-dev ffmpeg \
-  && apt-get -qq clean && rm -rf /var/lib/apt/lists/*
-
 # Install ioBroker
-RUN curl -sL https://iobroker.net/install.sh | bash - \
+RUN apt-get -qq update && apt-get -qq install -y apt-utils \
+  && apt-get -qq update && apt-get -qq install -y build-essential \
+    gcc g++ make libavahi-compat-libdnssd-dev libudev-dev libpam0g-dev \
+    libcap2-bin sudo acl pkg-config git curl unzip python-dev \
+  && apt-get -qq clean && rm -rf /var/lib/apt/lists/* \
+  && curl -sL https://iobroker.net/install.sh | bash - \
   && apt-get -qq clean && rm -rf /var/lib/apt/lists/* \
   && test -d /home/iobroker || mkdir -p /home/iobroker/bin \
   && iobroker start \
-  && sleep 60s \
+  && sleep 5s \
   && iobroker stop
 
 # Declare persistent volumes
