@@ -13,23 +13,31 @@ latter could look something like this (for the first one
 [see below](#built-by-your-own)):
 
 ```bash
-$ docker run --name iob-temp -p 8081:8081 labonte/iobroker:node12-buster
-$ docker exec -it iob-temp /bin/bash
-# apt-get update && apt-get install -y ffmpeg && apt-get clean
-# exit
-$ docker container commit iob-temp iobroker:latest
-$ docker container rm -f iob-temp
-$ docker run --name iobroker -p 8081:8081 iobroker:latest
+docker run -d --name iob-temp -p 8081:8081 labonte/iobroker:node12-buster
+docker exec -it iob-temp /bin/bash
 ```
 
-This would launch a container from my iobroker debian buster image with 
-node 12, install ffmpeg inside the running container, do a little cleanup,
-create a new local image called `iobroker:latest` from the running container,
-removes the temporary container and finally relaunches ioBroker using the 
-modified image.  
-You could also add a `-c "<your-commands>"` to the second line, if you know
-all necessary commands and want to automate the process with a script or
-something like that.
+The above will launch a container from my iobroker debian buster image with 
+node 12. Inside the container you can do what you want to do... eg. install
+ffmpeg inside the running container and do a little cleanup (that should
+include removing the `~/.restore` which would cause the entrypoint script to 
+skip the auto-run of the restore script on fist startup):
+
+```bash
+apt update && apt install -y ffmpeg && sudo apt clean -y
+rm ~/.restore
+exit
+```
+
+And then commit running container state as your custom image (in this case we
+tag it as `iobroker:latest`) and run the optimized image in detached mode for
+_production_. 
+
+```bash
+docker container commit iob-temp iobroker:latest
+docker container rm -f iob-temp
+docker run -d --name iobroker -p 8081:8081 iobroker:latest
+```
 
 
 ## Available images and their base
@@ -72,18 +80,140 @@ understand and adapt. So you may add your dependencies and maybe further
 customizations between lines 2 and 3.
 
 ```bash
-$ git clone https://github.com/ylabonte/ioBroker.docker.git
-$ cd ioBroker.docker
-$ docker build -t iobroker:latest .
-$ docker run -d --name iobroker -p 8081:8081 iobroker:latest
+git clone https://github.com/ylabonte/ioBroker.docker.git
+cd ioBroker.docker
+docker build -t iobroker:latest .
+docker run -d --name iobroker -p 8081:8081 iobroker:latest
 ```
 
 
 #### ...directly from docker hub
 
-I only suggest this for testing reasons or if you want to build  your own
-image from a running container [as described above](#iobrokerdocker).
+I would only suggest this for testing reasons or if you want to build your
+own image from a running container [as described above](#iobrokerdocker).
 
 ```bash
-$ docker run -d --name iobroker -p 8081:8081 labonte/iobroker:latest
+docker run -d --name iobroker -p 8081:8081 labonte/iobroker:latest
 ```
+
+
+#### ...on your (Qnap) NAS with Container Station
+
+It's not really restricted to Qnap NAS, but the example values are taken
+from there and it's meant as inspiration for those who has a NAS with
+Container Station or a similar product, that wraps a more or less user
+friendly gui (that you do not want to use). Or anybody else who wants to
+run the image _exposed to his lan instead of publishing single ports_.
+
+See: [example-run-qnap.sh](./example-run-qnap.sh)
+
+
+### Mounting volumes
+
+#### Which type of volume/mount to use
+
+The recommended docker mount type would be a (named) `volume`. This way you
+will avoid trouble regarding permissions, because everything will be handled
+within the docker ecosystem and will not influence your host filesystem.  
+The counter part might be the lack of accessibility from host-system 
+perspective. If you prefer to have easy access to the files inside a specific
+volume, you should use a bind mount. So you will have to decide by your own,
+which best suits your needs.
+
+If you do not specify anything for the volumes defined in the Dockerfile,
+docker will automatically create these volumes using random names, that look
+like some cryptographic hash values. To list all volumes of your docker host,
+you can run `docker volume ls`.
+
+**Hint:** Think of a re-deployment! If you are using the volumes - which means
+using the ioBroker backup in case of the _/opt/iobroker/backups_ volume and
+respectivly using letsencrypt for _/etc/letsencrypt_ - you definitely should
+specify the corresponding mount, because you at least have to, when re-
+deploying a container that should make use of the persistent data.
+
+
+#### (Named) volume mounts
+
+As simple as the name suggests, you must only specify a name to make use of a
+named volume. There are more things, you can do, but you should consult the
+official documentation for further information.
+
+The simplest way to run the image using named volumes would look like this:
+
+```bash
+docker run -d --name iobroker -p 8081:8081 \
+    -v iob-backups:/opt/iobroker/backups \
+    -v letsencrypt:/etc/letsencrypt \
+    labonte/iobroker:latest
+```
+
+
+If you have files - let us say existing _ioBroker backups_ - on your host
+system, you can run a tmp container mounting the volume and the director with
+your existing backups, copy your backups from one to the other volume and then
+launch your iobroker container. (This example assumes, you are using a 
+node:12-buster based iobroker image... won't mess up your image cache with
+unnecessary images.)
+
+```bash
+docker run -it --rm --entrypoint /bin/bash \
+    -v iob-backups:/mnt/iob-backups \
+    -v <path to your backups>:/mnt/old-backups \
+    node:12-buster \
+    '-c "cp -rf /mnt/old-backups/* /mnt/iob-backups/."'
+```
+
+Afterward you can run the your ioBroker container with your named volume and the
+existing backups inside it.
+
+```bash
+docker run -d --name iobroker \
+    -v iob-backups:/opt/iobroker/backups \
+    -p 8081:8081 \
+    labonte/iobroker:latest
+```
+
+
+#### Bind mounts
+
+For some reason you might want to use a `bind` mount (specify the full path
+of a file or directory on the host-system). 
+The latter might cause problems regarding the directory ownership. You have
+to so solve this problems by your own, if they occur...  
+(Please consider this example assumes you have your backup dir located at 
+_/mnt/backups_ on your host system.)
+
+```bash
+docker run -d --name iobroker \
+    -v /mnt/backups:/opt/iobroker/backups \
+    -p 8081:8081 \
+    labonte/iobroker:latest
+```
+
+
+## License
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <https://unlicense.org>
