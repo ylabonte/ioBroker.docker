@@ -13,20 +13,21 @@ RUN apk add --no-cache --virtual .gyp acl avahi bash build-base curl git linux-h
 VOLUME /opt/iobroker/backups
 VOLUME /etc/letsencrypt
 
-# Copy scripts
-COPY ./scripts/* /home/iobroker/bin/
+# Copy entrypoint and custom scripts
 COPY ./docker-entrypoint.sh /entrypoint.sh
+COPY ./scripts/* /home/iobroker/bin/
 
 # Set timezone and permissions
 RUN printf "TZ='Europe/Berlin'\nexport TZ\n" >> /home/iobroker/.profile \
-  # Set owner of iobroker directories
+  # Set owner of iobroker home dir
   && chown -R iobroker. /home/iobroker \
-  # Preserve execution permissions for our scripts
-  && chmod -R 0775 /home/iobroker/bin /entrypoint.sh
+  # Preserve execution permissions for our entrypoint and custom scripts
+  && chmod -R 0775 /entrypoint.sh /home/iobroker/bin
 
 # Switch to the iobroker user (created by iobroker's install script)
 WORKDIR /home/iobroker
 
+# Set a few basic env vars
 ENV HOME /home/iobroker
 ENV PATH ${HOME}/bin:${PATH}
 
