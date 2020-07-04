@@ -191,6 +191,18 @@ docker run -d --name iobroker \
 ```
 
 
+### My own run configuration
+
+I wrote two small scripts for my own ioBroker deployment and added those to the
+repo:
+
+1. [prepare-qnap.sh](./prepare-qnap.sh)
+   To prepare a customized image with additional packages and an additional
+   command in the [_entrypoint.sh_](./docker-entrypoint.sh).
+2. [run-qnap.sh](./run-qnap.sh)
+   To run the image on my Qnap NAS using a bridged interface and named volumes.
+
+
 ## License
 
 This is free and unencumbered software released into the public domain.
