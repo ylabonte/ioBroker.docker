@@ -1,5 +1,5 @@
-[![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/labonte/iobroker.svg?logo=docker&logoColor=white)](https://hub.docker.com/r/labonte/iobroker/tags)
-[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/labonte/iobroker.svg?logo=docker&logoColor=white)](https://hub.docker.com/r/labonte/iobroker/builds)
+[![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/labonte/iobroker.svg?style=flat-square&logo=docker&logoColor=white)](https://hub.docker.com/r/labonte/iobroker/tags)
+[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/labonte/iobroker.svg?style=flat-square&logo=docker&logoColor=white)](https://hub.docker.com/r/labonte/iobroker/builds)
 
 # ioBroker.docker
 This is an example for running [ioBroker](https://www.iobroker.net/) in a 
@@ -24,7 +24,7 @@ include removing the `~/.restore` which would cause the entrypoint script to
 skip the auto-run of the restore script on fist startup):
 
 ```bash
-apt update && apt install -y ffmpeg && sudo apt clean -y
+apt update && apt install -y ffmpeg && apt clean -y
 rm ~/.restore
 exit
 ```
@@ -160,7 +160,7 @@ docker run -it --rm --entrypoint /bin/bash \
     -v iob-backups:/mnt/iob-backups \
     -v <path to your backups>:/mnt/old-backups \
     node:12-buster \
-    '-c "cp -rf /mnt/old-backups/* /mnt/iob-backups/."'
+    -c 'cp -rf /mnt/old-backups/* /mnt/iob-backups/.'
 ```
 
 Afterward you can run the your ioBroker container with your named volume and the

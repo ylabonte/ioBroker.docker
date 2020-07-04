@@ -42,11 +42,8 @@ LETSENCRYPT_VOLUME="/share/Container/container-station-data/application/letsencr
 ## Run container
 # Let's run this container...
 docker run -d --name ${IOBROKER_CONTAINER} \
-  # Restart behavior
   --restart unless-stopped \
-  # Memory limit
   --memory=4096M \
-  # Number of CPUs
   --cpus=1 \
   --hostname ${IOBROKER_HOSTNAME} \
   --net ${IOBROKER_NET} \
