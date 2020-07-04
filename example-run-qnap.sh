@@ -1,28 +1,52 @@
 #!/bin/bash
 
-## This is an example on how to run this ioBroker image with a static IP on 
-## your Qnap NAS with Container Station and a bridged network interface using 
-## the docker cli. Of course, you can also use the Container Station GUI...
+# This is an example on how to run this ioBroker image with a static IP over
+# a bridged network interface in your local network on your Qnap NAS with 
+# Container Station.
+#
+# To have this said: You can also do that using the Container Station GUI!
+# I just added this to the repo, because I preferred to use the docker cli
+# and it took me a moment to gather all relevant console parameters...
 
-## You can build your own image and replace the url, if you want.
+## Image
+# You might want to build your own image and replace the url below.
 IOBROKER_IMAGE="labonte/iobroker:latest"
-## First chose a name for the container.
+
+## Container name
 IOBROKER_CONTAINER="iobroker"
-## Then pick the right network interface. (eg. use `docker network ls` to display them)
+
+## Network interface
+# Then pick the right network interface.
+# (eg. use `docker network ls` to display them)
 IOBROKER_NET="qnet-static-bond0-434d21"
-## Now set the static IP address.
+
+## Static ip address
 IOBROKER_IP="10.11.11.100"
-## Chose a hostname.
+
+## Hostname
 IOBROKER_HOSTNAME="iobroker.qnap.int"
-## Define where to find your backup volume.
+
+## Backup volume
+# Assuming you want to use a bind mount on your Qnap NAS, specify the full
+# path to your ioBroker backup directory. Otherwise you can just leave a
+# name for a named volume, that will then be created on container launch.
 IOBROKER_BACKUP_VOLUME="/share/Container/container-station-data/application/iobroker-backups"
-## Finally define where to find your letsencrypt volume.
+
+## Letsencrypt volume
+# Finally define where to find your letsencrypt volume. If you will not use
+# letsencrypt with this container, you might completely remove the volume
+# (from the Dockerfile, when building your own image), but at least remove
+# the line `-v ${LETSENCRYPT_VOLUME}:/etc/letsencrypt \` below.
 LETSENCRYPT_VOLUME="/share/Container/container-station-data/application/letsencrypt"
 
-## Let's run this container...
+## Run container
+# Let's run this container...
 docker run -d --name ${IOBROKER_CONTAINER} \
+  # Restart behavior
   --restart unless-stopped \
+  # Memory limit
   --memory=4096M \
+  # Number of CPUs
   --cpus=1 \
   --hostname ${IOBROKER_HOSTNAME} \
   --net ${IOBROKER_NET} \
