@@ -1,9 +1,30 @@
 [![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/labonte/iobroker.svg?style=flat-square&logo=docker&logoColor=white)](https://hub.docker.com/r/labonte/iobroker/tags)
 [![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/labonte/iobroker.svg?style=flat-square&logo=docker&logoColor=white)](https://hub.docker.com/r/labonte/iobroker/builds)
 
+
 # ioBroker.docker
 This is an example for running [ioBroker](https://www.iobroker.net/) in a 
 docker container using [`node`](https://hub.docker.com/_/node) images as base.
+
+
+## Table of Contents
+* [Introduction](#intro)
+* [Available images and their base](#images)
+* [Contribution and help](#help)
+    * [Running the image...](#run-images)
+        * [...built by your own](#run-build-run)
+        * [...directly from docker hub](#run-dockerhub)
+        * [...on your (Qnap) NAS with Container Station](#run-qnap)
+    * [Mounting volumes](#mount-images)
+        * [Which type of volume/mount to use](#mount-type)
+        * [(Named) volume mounts](#mount-volume)
+        * [Bind mounts](#mount-bind)
+* [My own run configuration](#my-conf)
+* [License](#license)
+
+
+<a name="intro"></a>
+## Introduction
 
 I kept it slim and simple, so you can add your individual customizations eg.
 install dependencies for a specific adapters. You can do so by extending the
@@ -40,6 +61,7 @@ docker run -d --name iobroker -p 8081:8081 iobroker:latest
 ```
 
 
+<a name="images"></a>
 ## Available images and their base
 
 Images are automatically built, when a base image is updated or there's a
@@ -54,6 +76,7 @@ new commit on one of the following Git branches in my repo.
 | `node/14-buster` | `labonte/iobroker:node14-buster` | `node:14-buster` |
 
 
+<a name="help"></a>
 ## Contribution and help
 
 Feel free to fork, suggest improvements or ask questions using 
@@ -62,6 +85,7 @@ or share your knowledge, use cases, adaptions/customizations and other
 suggestions using the [wiki](https://github.com/ylabonte/ioBroker.docker/wiki).
 
 
+<a name="run-images"></a>
 ### Running the image...
 
 **Note**  
@@ -72,6 +96,7 @@ or mount volumes (`/opt/iobroker/backups` and `/etc/letsencrypt` would be
 the desired ones in my Dockerfile).
 
 
+<a name="run-build-run"></a>
 #### ...built by your own
 
 I suggest, you just clone or fork the repo as a starting point for your
@@ -87,6 +112,7 @@ docker run -d --name iobroker -p 8081:8081 iobroker:latest
 ```
 
 
+<a name="run-dockerhub"></a>
 #### ...directly from docker hub
 
 I would only suggest this for testing reasons or if you want to build your
@@ -97,6 +123,7 @@ docker run -d --name iobroker -p 8081:8081 labonte/iobroker:latest
 ```
 
 
+<a name="run-qnap"></a>
 #### ...on your (Qnap) NAS with Container Station
 
 It's not really restricted to Qnap NAS, but the example values are taken
@@ -108,8 +135,10 @@ run the image _exposed to his lan instead of publishing single ports_.
 See: [example-run-qnap.sh](./example-run-qnap.sh)
 
 
+<a name="mount-images"></a>
 ### Mounting volumes
 
+<a name="mount-type"></a>
 #### Which type of volume/mount to use
 
 The recommended docker mount type would be a (named) `volume`. This way you
@@ -132,6 +161,7 @@ specify the corresponding mount, because you at least have to, when re-
 deploying a container that should make use of the persistent data.
 
 
+<a name="mount-volume"></a>
 #### (Named) volume mounts
 
 As simple as the name suggests, you must only specify a name to make use of a
@@ -174,6 +204,7 @@ docker run -d --name iobroker \
 ```
 
 
+<a name="mount-bind"></a>
 #### Bind mounts
 
 For some reason you might want to use a `bind` mount (specify the full path
@@ -191,18 +222,21 @@ docker run -d --name iobroker \
 ```
 
 
-### My own run configuration
+<a name="my-conf"></a>
+## My own run configuration
 
 I wrote two small scripts for my own ioBroker deployment and added those to the
 repo:
 
-1. [prepare-qnap.sh](./prepare-qnap.sh)
+1. [prepare-qnap.sh](./prepare-qnap.sh)  
    To prepare a customized image with additional packages and an additional
    command in the [_entrypoint.sh_](./docker-entrypoint.sh).
-2. [run-qnap.sh](./run-qnap.sh)
-   To run the image on my Qnap NAS using a bridged interface and named volumes.
+2. [run-qnap.sh](./run-qnap.sh)  
+   To run the image on my Qnap NAS using a bridged network interface and named
+   volumes.
 
 
+<a name="lic"></a>
 ## License
 
 This is free and unencumbered software released into the public domain.
