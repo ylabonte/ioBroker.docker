@@ -27,9 +27,9 @@ docker container using [`node`](https://hub.docker.com/_/node) images as base.
 ## Introduction
 
 I kept it slim and simple, so you can add your individual customizations eg.
-install dependencies for a specific adapters. You can do so by extending the
-Dockerfile or using one of my images to apply your changes to the running 
-instance and aferwards create an image of that optimized container. The 
+installing dependencies for specific adapters. You can do so by extending the
+Dockerfile or using one of my cloud images to apply your changes to the running 
+instance and aferwards create an image of that customized container. The 
 latter could look something like this (for the first one 
 [see below](#built-by-your-own)):
 
@@ -59,6 +59,12 @@ docker container commit iob-temp iobroker:latest
 docker container rm -f iob-temp
 docker run -d --name iobroker -p 8081:8081 iobroker:latest
 ```
+
+Finally you will end up with your own customized container. You may push this
+one to your own docker repository or wherever you want or simply keep it local
+on the machine on which you want to run the container. If you chose this way
+to create a customized image, you may want to take a look at the example script
+([prepare-qnap.sh](./prepare-qnap.sh) or go to [My own run configuration](#my-conf)).
 
 
 <a name="images"></a>
