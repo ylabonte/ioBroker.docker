@@ -19,6 +19,7 @@ docker container using [`node`](https://hub.docker.com/_/node) images as base.
         * [Which type of volume/mount to use](#mount-type)
         * [(Named) volume mounts](#mount-volume)
         * [Bind mounts](#mount-bind)
+    * [Further help](#contact)
 * [My own run configuration](#my-conf)
 * [License](#license)
 
@@ -226,6 +227,14 @@ docker run -d --name iobroker \
     -p 8081:8081 \
     labonte/iobroker:latest
 ```
+
+
+<a name="contact"></a>
+### Further help
+
+If you need further help or recognize an error within one of my cloud images
+please [create an issue](https://github.com/ylabonte/ioBroker.docker/issues) 
+and describe the problem. I will get to it as soon as I can.
 
 
 <a name="my-conf"></a>
